@@ -24,7 +24,7 @@ export default function SearchComponent() {
     }, [searchValue]);
     return (
         <>
-            <TextField label="Search By name or Email " margin="normal"
+            <TextField label="Title or Description" margin="normal"
                 value={searchValue}
                 onChange={(e) => setsearchValue(e.target.value)} />
         </>

@@ -10,9 +10,9 @@ import { FeedbackService } from 'src/feedback/feedback.service';
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>,
-            private readonly hasingService:HasingService,
-            @Inject(forwardRef(() => FeedbackService))
-            private readonly feedbackService:FeedbackService) { }
+    private readonly hasingService: HasingService,
+    @Inject(forwardRef(() => FeedbackService))
+    private readonly feedbackService: FeedbackService) { }
 
   async create(createUserDto: CreateUserDto) {
     const { userName, email, password } = createUserDto;
@@ -27,45 +27,57 @@ export class UserService {
 
     if (emailExist) throw new ConflictException("email Already Exist");
 
-     await this.userRepo.save(createUserDto);
+    await this.userRepo.save(createUserDto);
 
     return { "msg": "User Succesfully Registered" }
 
   }
 
   async findOneByEmailOrUserName(emailOrUsername: string) {
-    let user:User;
+    let user: User;
     if (emailOrUsername) {
-      const user = await this.userRepo.findOneBy({ email: emailOrUsername });
-      if(user!=null){  return user;}
+
+      const user = await this.userRepo.findOne({
+        where: { userName: emailOrUsername },
+        select: ["email", "id", "password"]
+      })
+
+      if (user != null) { return user; }
     }
+
     if (emailOrUsername) {
-      const user = await this.userRepo.findOneBy({ userName: emailOrUsername });
+      const user = await this.userRepo.findOne({
+
+        where: { userName: emailOrUsername },
+
+        select: ["email", "userName", "id", "password"]
+      })
+
       return user;
     }
   }
 
-async findOne(id: number) {
-    return await this.userRepo.findOneBy({id})
+  async findOne(id: number) {
+    return await this.userRepo.findOneBy({ id })
   }
 
 
-  async findAlluser(userId:number) {
-    if(userId==1){
+  async findAlluser(userId: number) {
+    if (userId == 1) {
       return await this.userRepo.find();
     }
     throw new ForbiddenException()
   }
 
-  async disableUser(userId:number,adminId:number){
-    if(adminId==1){
+  async disableUser(userId: number, adminId: number) {
+    if (adminId == 1) {
       await this.userRepo.softDelete(userId);
     }
-     throw new ForbiddenException()
+    throw new ForbiddenException()
   }
 
-  
-  async seeMyFeedbacks(userId:number){
+
+  async seeMyFeedbacks(userId: number) {
     return await this.feedbackService.findAllUserFeedback(userId);
   }
 

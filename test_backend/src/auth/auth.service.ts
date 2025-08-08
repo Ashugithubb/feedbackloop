@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthJwtPayload } from './type/auth.payload';
 import { UserService } from 'src/user/user.service';
+import { console } from 'inspector';
 
 
 
@@ -20,11 +21,13 @@ export class AuthService {
 
     ) { }
     async validateUser({ emailOrUsername, password }: { emailOrUsername: string, password: string }) {
-        console.log(emailOrUsername);
+        console.log("jfiujfuif");
         const user = await this.userService.findOneByEmailOrUserName(emailOrUsername);
         if (!user) throw new UnauthorizedException("User email not found");
         const matched = await this.hasingService.compare(password, user.password);
+        console.log("matched")
         if (!matched) throw new UnauthorizedException("Invalid password");
+        console.log("matched")
         return { email: user.email, id: user.id, };
 
 

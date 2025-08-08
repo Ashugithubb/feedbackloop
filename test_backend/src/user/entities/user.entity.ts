@@ -14,7 +14,7 @@ export class User {
     @Column({unique:true})
     email:string
 
-    @Column()
+    @Column({select:false})
     password:string
 
     @CreateDateColumn()
@@ -27,5 +27,5 @@ export class User {
     //  @JoinTable()
     // comment:Comment[]
   @OneToMany(()=>UserComment,(u)=>u.user)
-    userComment:UserComment
+    userComment:UserComment[]
 }

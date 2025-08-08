@@ -6,7 +6,7 @@ export const UserInfo = createAsyncThunk(
   'user/getProfile',
   async (_, thunkAPI) => {
     try {
-      const res = await axios.get('http://localhost:3001/feedback', {
+      const res = await axios.get('http://localhost:3001/user', {
         withCredentials: true,
       });
      console.log("data:", res.data);
@@ -16,6 +16,7 @@ export const UserInfo = createAsyncThunk(
     }
   }
 );
+
 
 
 
@@ -40,7 +41,7 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(UserInfo.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(UserInfo.fulfilled, (state, action: PayloadAction<UserProfile>) => {
         state.loading = false;
         state.profile = action.payload;
       })

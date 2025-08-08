@@ -20,19 +20,29 @@ export class GetFeedbackQueryDto {
 
   @IsOptional()
   @IsArray()
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value.map(Number);
+    if (typeof value === 'string') return [Number(value)];
+    return [];
+  })
   tags?: number[];
 
   @IsOptional()
   @IsArray()
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value.map(Number);
+    if (typeof value === 'string') return [Number(value)];
+    return [];
+  })
   authors?: number[]
 
-//   @IsString()
-//  @IsOptional()
-//   tags?: string
+  //   @IsString()
+  //  @IsOptional()
+  //   tags?: string
 
-//   @IsString()
-//    @IsOptional()
-//   authors?: string
+  //   @IsString()
+  //    @IsOptional()
+  //   authors?: string
 
   @IsOptional()
   @IsString()

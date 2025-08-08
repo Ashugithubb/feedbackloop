@@ -37,7 +37,7 @@ export default function SignupForm() {
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
-            name: '',
+            userName: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -45,19 +45,12 @@ export default function SignupForm() {
     });
 
     const onSubmit = async (data: SignupFormData) => {
-        try {
-            dispatch(signupUser(data));
-            toast.success("Registration successful!");
+        const res = await dispatch(signupUser(data));
+        if (res.meta.requestStatus === 'fulfilled') {
+            toast.success("Signup successful!");
             router.push('/login');
-        }
-        catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                const { message } = error.response.data;
-                toast.error(message);
-            } else {
-                toast.error("Something went wrong");
-            }
-            console.log(error);
+        } else {
+            toast.error(res.payload || "Signup failed");
         }
     };
 
@@ -81,9 +74,9 @@ export default function SignupForm() {
 
                         <TextField
                             label="user Name"
-                            {...register('name')}
-                            error={!!errors.name}
-                            helperText={errors.name?.message}
+                            {...register('userName')}
+                            error={!!errors.userName}
+                            helperText={errors.userName?.message}
                             fullWidth
                             margin="normal"
                         />

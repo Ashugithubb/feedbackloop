@@ -25,7 +25,7 @@ import { loginUser } from '@/app/redux/thunk/login.user';
 
 
 export const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
+  emailOrUsername: z.string().min(6,{ message: 'Invalid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 });
 
@@ -44,15 +44,14 @@ export default function LoginForm() {
   });
   const notify = () => toast("Login Successfull!");
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      // dispatch(loginUser(data));
-      notify()
-      router.push('/home');
-    }
-    catch (err) {
-      toast.error("Login failed: " + (err as Error).message);
-    }
+    const res = await dispatch(loginUser(data));
 
+    if (res.meta.requestStatus === 'fulfilled') {
+      toast.success("Login successful!");
+      router.push('/home');
+    } else {
+      toast.error(res.payload || "Login failed");
+    }
   };
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -74,10 +73,10 @@ export default function LoginForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
-            label="Email"
-            {...register('email')}
-            error={!!errors.email}
-            helperText={errors.email?.message}
+            label="Email or userName"
+            {...register('emailOrUsername')}
+            error={!!errors.emailOrUsername}
+            helperText={errors.emailOrUsername?.message}
             fullWidth
             margin="normal"
           />

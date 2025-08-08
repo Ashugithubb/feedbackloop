@@ -5,12 +5,13 @@ import { Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity("feedback_tags")
 export class FeedbackTag {
     @PrimaryGeneratedColumn()
-    id:number
+    id: number
 
-    @ManyToOne(()=>Feedback)
-    feedback:Feedback
+    @ManyToOne(() => Feedback,(f)=>f.feedbackTag)
+    feedback: Feedback
 
-    @ManyToOne(()=>Tag)
-    tag:Tag
-    
+    @ManyToOne(() => Tag,(t)=>t.feedbackTag)
+    tag: Tag;
+
+
 }

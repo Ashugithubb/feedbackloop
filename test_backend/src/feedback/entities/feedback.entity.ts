@@ -41,6 +41,6 @@ export class Feedback {
     feedbackTag: FeedbackTag[]
 
     @OneToMany(()=>Comment,(c)=>c.feedback)
-    comment:Comment
+    comment:Comment[]
 
 }

@@ -1,9 +1,7 @@
 interface UserProfile {
   id: number;
-  name:string
+  userName:string
   email: string;
-  gender: string;
-  favourite:[];
 }
 interface UserState {
   loading: boolean;

@@ -7,10 +7,10 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
-  @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    // return this.tagService.create(createTagDto);
-  }
+  // @Post()
+  // create(@Body() createTagDto: CreateTagDto) {
+  //   return this.tagService.create(createTagDto);
+  // }
 
   @Get()
   findAll() {

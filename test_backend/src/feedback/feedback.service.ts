@@ -11,6 +11,7 @@ import { UserService } from 'src/user/user.service';
 import { GetFeedbackQueryDto } from './dto/feedback.query.dto';
 import { Score } from './enum/scrore.enum';
 import { isObject } from 'class-validator';
+import { Console } from 'console';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class FeedbackService {
   constructor(@InjectRepository(Feedback) private readonly feedbackRepo: Repository<Feedback>,
     @InjectRepository(FeedbackTag) private readonly feedbackTagRepo: Repository<FeedbackTag>,
     private readonly tagService: TagService,
-     @Inject(forwardRef(() => UserService))
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService) { }
 
   async create(createFeedbackDto: CreateFeedbackDto, userId: number) {
@@ -70,17 +71,18 @@ export class FeedbackService {
     })
   }
 
-  async showAllFeebackWithUserDeatails(adminId:number) {
-    if(adminId==1) {
-    return await this.feedbackRepo.find(
-      {
-        relations: ["user",],
-        withDeleted:false
-      }
-    )}
+  async showAllFeebackWithUserDeatails(adminId: number) {
+    if (adminId == 1) {
+      return await this.feedbackRepo.find(
+        {
+          relations: ["user",],
+          withDeleted: false
+        }
+      )
+    }
   }
 
-  //   async showAllFeeback(query: GetFeedbackQueryDto) {
+  //     async showAllFeeback(query: GetFeedbackQueryDto) {
   //     const {
   //       page = 1,
   //       limit = 10,
@@ -95,23 +97,28 @@ export class FeedbackService {
   //       .leftJoinAndSelect('feedback.user', 'user')
   //       .leftJoinAndSelect('feedback.feedbackTag', 'feedbackTag')
   //     if (searchValue) {
-  //       qb.andWhere([
-  //         'feedback.title ILIKE :title', { title: `%${searchValue}%` },
-  //         'feedback.description ILIKE :description', { description: `%${searchValue}%` },
-  //       ]);
+  //       // qb.andWhere([
+  //       //   'feedback.title ILIKE :title', { title: `%${searchValue}%` },
+  //       //   'feedback.description ILIKE :description', { description: `%${searchValue}%` },
+  //       // ]);
+  //       qb.andWhere(
+  //   '(feedback.title ILIKE :search OR feedback.description ILIKE :search)',
+  //   { search: `%${searchValue}%` }
+  // );
   //     }
 
   //     if (authors) {
   //       const author =parseInt(authors,10)
-  //       qb.andWhere('user.id = :authors', { author });
+  //       qb.andWhere('user.id = :author', { author }); //authors->>author
   //     }
   //     if(tags){
   //        const tag =parseInt(tags,10)
-  //       qb.andWhere('feedbackTag.tagId = :tags', { tags });
+  //       qb.andWhere('feedbackTag.tagId = :tag', { tag }); //tags->>tag
   //     }
 
   //     const [feedback, total] = await qb
-  //       .orderBy('feedback.id', sortOrder)
+  //        .addSelect('feedback.upVotes - feedback.downVotes', 'score')  //vartual coulmn
+  //        .orderBy('score', sortOrder)  //orderbY
   //       .skip((page - 1) * limit)
   //       .take(limit)
   //       .getManyAndCount();
@@ -140,60 +147,34 @@ export class FeedbackService {
       .createQueryBuilder('feedback')
       .leftJoinAndSelect('feedback.user', 'user')
       .leftJoinAndSelect('feedback.feedbackTag', 'feedbackTag')
+      .leftJoinAndSelect('feedbackTag.tag', "tag")
 
-      qb.andWhere('feedback.status = :status', { status: 'Public' });
+    qb.andWhere('feedback.status = :status', { status: 'Public' });
     if (searchValue) {
-      qb.orWhere([
-        'feedback.title ILIKE :title', { title: `%${searchValue}%` },
-        'feedback.description ILIKE :description', { description: `%${searchValue}%` },
-      ]);
+      qb.andWhere(
+        '(feedback.title ILIKE :search OR feedback.description ILIKE :search)',
+        { search: `%${searchValue}%` }
+      );
     }
 
     if (authors) {
-      qb.andWhere('user.id = :authors', { authors });
+      qb.andWhere('user.id IN (:...authors)', { authors });
     }
-    // if(tags){
-    //   qb.andWhere('feedbackTag.tagId = :tags', { tags });
-    // }
-
     if (tags) {
-      let tagid: any = []
-      console.log("yes")
-      console.log(typeof tags);
-      if (typeof tags === 'object') {
-        console.log("check");
-        Object.entries(tags).map((k) => {
-          tagid.push(k);
-          console.log(k)
-          // console.log( k[idx].indexOf("0"));
-        })
-        console.log("Array", tagid);
-        tagid.map((key) => {
-          console.log("ke", typeof key[0])
-        })
-        for (let i = 0; i < tagid.length; i++) {
-          const id: number = Number(tagid[i][1])
-          console.log(typeof tagid[i][1]);
-          console.log(tagid[i][1]);
-          qb.andWhere('feedbackTag.tagId = :id', { id });
-        }
+      qb.andWhere('tag.id IN (:...tagIds)', { tagIds: tags });
+    }
+    const [feedback, total] = await qb
+      .addSelect('feedback.upVotes - feedback.downVotes', 'score')
+      .orderBy('score', sortOrder)
+      .skip((page - 1) * limit)
+      .take(limit)
 
-      } else {
-
-        qb.andWhere('feedbackTag.tagId = :tags', { tags });
-      }}
-    
-      const [feedback, total] = await qb
-        .orderBy('feedback.id', sortOrder)
-        .skip((page - 1) * limit)
-        .take(limit)
-        .getManyAndCount();
-      return {
-        total,
-        page,
-        limit,
-        feedback,
-      };
-    
+      .getManyAndCount();
+    return {
+      total,
+      page,
+      limit,
+      feedback,
+    };
   }
 }

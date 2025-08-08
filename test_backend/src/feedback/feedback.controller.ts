@@ -41,6 +41,7 @@ export class FeedbackController {
 
   @Get()
    async showAllFeeback(@Query() query:GetFeedbackQueryDto) {
+ 
     return await this.feedbackService.showAllFeeback(query);
     
   }

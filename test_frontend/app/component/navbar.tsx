@@ -45,7 +45,6 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="static" color="secondary" >
       <Toolbar>
-        {/* Logo + AppName */}
         <Box display="flex" alignItems="center" gap={1}>
           <Image
             src="https://framerusercontent.com/images/VUqdevjirDo8kn502U0VpXsVw.svg?scale-down-to=2048"
@@ -54,13 +53,11 @@ const Navbar: React.FC = () => {
             height={32}
           />
           <Typography variant="h6" noWrap>
-            RMS
+            Feedback Loop
           </Typography>
         </Box>
 
         <Box flexGrow={1} />
-
-        {/* Notification Bell + Avatar */}
         <Box sx={{ display: "flex", gap: 2 }}>
           {!email ? (
             <Button onClick={handelLoginClick} variant="contained">
@@ -78,8 +75,8 @@ const Navbar: React.FC = () => {
             <NotificationsIcon />
           </IconButton>
           <Avatar
-            alt={profile?.name}
-            src={profile?.email}
+            // alt={profile?.name}
+            // src={profile?.email}
             sx={{ cursor: 'pointer' }}
           />
         </Box>

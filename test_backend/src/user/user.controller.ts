@@ -26,10 +26,11 @@ export class UserController {
     return this.userService.seeMyFeedbacks(userId);
   }
 
-  
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findOne(@Req() req) {
+    const userId=req.user.id
+    return this.userService.findOne(userId);
   }
 
   @Patch(':id')

@@ -19,8 +19,8 @@ export class TagService {
   }
 
   
-  findAll() {
-    return `This action returns all tag`;
+  async findAll() {
+    return await this.tagRepositry.find();
   }
 
   findOne(id: number) {
