@@ -3,30 +3,30 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { boolean } from 'zod';
 
-export interface TagDetails {
+export interface UserDetails {
     id: number,
-    tagName: string
+    userName: string
 }
-export interface Tags {
+export interface users {
     loading: boolean;
     error: string | null;
-    tagDetails: TagDetails[] | null
+    userDetails: UserDetails[] | null
 }
 
-const initialState: Tags = {
+const initialState: users = {
     loading: false,
     error: null,
-    tagDetails: null
+    userDetails: null
 }
 
-export const TagInfo = createAsyncThunk(
-    'tag/getTag',
+export const UserSearch = createAsyncThunk(
+    'userSearch/getuserSerach',
     async (_, thunkAPI) => {
         try {
-            const res = await axios.get('http://localhost:3001/tag', {
+            const res = await axios.get('http://localhost:3001/user/search', {
                 withCredentials: true,
             });
-            
+            console.log(" user data:", res.data);
             return res.data;
         } catch (error) {
             return thunkAPI.rejectWithValue('Failed to fetch tags');
@@ -39,34 +39,34 @@ export const TagInfo = createAsyncThunk(
 
 
 
-const tagSlice = createSlice({
-    name: 'tag',
+const userSearchSlice = createSlice({
+    name: 'usersearch',
     initialState,
     reducers: {
         clearUser: (state) => {
-            state.tagDetails = null;
+            state.userDetails = null;
             state.error = null;
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(TagInfo.pending, (state) => {
+            .addCase(UserSearch .pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(TagInfo.fulfilled, (state, action: PayloadAction<TagDetails[]>) => {
+            .addCase(UserSearch .fulfilled, (state, action: PayloadAction<UserDetails[]>) => {
                 state.loading = false;
-                state.tagDetails = action.payload;
+                state.userDetails = action.payload;
             })
-            .addCase(TagInfo.rejected, (state, action) => {
+            .addCase(UserSearch .rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
     },
 });
 
-export const { clearUser } = tagSlice.actions;
+export const { clearUser } = userSearchSlice.actions;
 
-export default tagSlice.reducer;
+export default userSearchSlice.reducer;
 
 

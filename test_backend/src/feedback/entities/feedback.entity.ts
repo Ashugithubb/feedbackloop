@@ -3,6 +3,7 @@ import { Status } from "../enum/status.enum";
 import { User } from "src/user/entities/user.entity";
 import { FeedbackTag } from "src/feedback-tag/entities/feedback-tag.entity";
 import { Comment } from "src/comment/entities/comment.entity";
+import { Votes } from "src/votes/entities/vote.entity";
 
 @Entity('feedback')
 export class Feedback {
@@ -34,13 +35,15 @@ export class Feedback {
     deletedAt: Date
 
 
-    @ManyToOne(() => User, (u) => u.feedback,{onDelete:"CASCADE"})
+    @ManyToOne(() => User, (u) => u.feedback, { onDelete: "CASCADE" })
     user: User
 
     @OneToMany(() => FeedbackTag, (f) => f.feedback)
     feedbackTag: FeedbackTag[]
 
-    @OneToMany(()=>Comment,(c)=>c.feedback)
-    comment:Comment[]
-
+    @OneToMany(() => Comment, (c) => c.feedback)
+    comment: Comment[]
+    
+    @OneToMany(() => Votes, vote => vote.feedback)
+    votes: Votes[];
 }

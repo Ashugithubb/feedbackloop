@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { Feedback } from './entities/feedback.entity';
@@ -28,13 +28,14 @@ export class FeedbackService {
     if (!user) throw new UnauthorizedException("Please LogedId to add Feedback");
 
     const { title, description, status, tags } = createFeedbackDto;
-
+    console.log(status);
     const tagsToBeAdded = await this.tagService.create(tags);
 
     const tagsIds = tagsToBeAdded?.map((t: Tag) => t.id);
     const newFeedback = await this.feedbackRepo.create({
       title,
       description,
+      status,
       user
     })
 
@@ -55,7 +56,6 @@ export class FeedbackService {
     return feedbackAssigned
 
   }
-
   async update(id: number, updateFeedbackDto: UpdateFeedbackDto) {
 
     return await this.feedbackRepo.update(id, updateFeedbackDto);
@@ -70,7 +70,6 @@ export class FeedbackService {
       where: { user: { id: userId } }
     })
   }
-
   async showAllFeebackWithUserDeatails(adminId: number) {
     if (adminId == 1) {
       return await this.feedbackRepo.find(
@@ -82,7 +81,24 @@ export class FeedbackService {
     }
   }
 
-  //     async showAllFeeback(query: GetFeedbackQueryDto) {
+  
+   async incrementUpvotes(feedbackId: number): Promise<void> {
+    await this.feedbackRepo.increment({ id: feedbackId }, 'upVotes', 1);
+  }
+
+  async decrementUpvotes(feedbackId: number): Promise<void> {
+    await this.feedbackRepo.decrement({ id: feedbackId }, 'upVotes', 1);
+  }
+
+  async incrementDownvotes(feedbackId: number): Promise<void> {
+    await this.feedbackRepo.increment({ id: feedbackId }, 'downVotes', 1);
+  }
+
+  async decrementDownvotes(feedbackId: number): Promise<void> {
+    await this.feedbackRepo.decrement({ id: feedbackId }, 'downVotes', 1);
+  }
+
+    //     async showAllFeeback(query: GetFeedbackQueryDto) {
   //     const {
   //       page = 1,
   //       limit = 10,

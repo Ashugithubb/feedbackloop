@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,7 +23,7 @@ export class UserController {
   @Get("/feedback")
   seeMyFeedbacks(@Req() req){
     const userId=req.user.id;
-    return this.userService.seeMyFeedbacks(userId);
+    return this.userService.myFeedbacks(userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -43,5 +43,10 @@ export class UserController {
   disableUser(@Param('id') id: string,@Req()req) {
     const adminId=req.user.id
     return this.userService.disableUser(+id,adminId);
+  }
+
+  @Get('search')
+  async searchUser(){
+    return this.userService.searchUser();
   }
 }

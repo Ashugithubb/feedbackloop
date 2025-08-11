@@ -11,7 +11,7 @@ import { CommentModule } from './comment/comment.module';
 import { FeedbackTagModule } from './feedback-tag/feedback-tag.module';
 import { AuthModule } from './auth/auth.module';
 import { UserCommentModule } from './user-comment/user-comment.module';
-import { UpvotesModule } from './upvotes/upvotes.module';
+import { UpvotesModule } from './votes/votes.module';
 
 
 @Module({

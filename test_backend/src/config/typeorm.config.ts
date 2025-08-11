@@ -6,7 +6,7 @@ import { Tag } from 'src/tag/entities/tag.entity';
 import { FeedbackTag } from 'src/feedback-tag/entities/feedback-tag.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { UserComment } from 'src/user-comment/entities/user-comment.entity';
-import { Upvote } from 'src/upvotes/entities/upvote.entity';
+import { Votes } from 'src/votes/entities/vote.entity';
 
 export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -18,7 +18,7 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
     username: configService.get<string>('DB_USERNAME'),
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_DATABASE'),
-    entities:[User,Feedback,Tag,FeedbackTag,Comment,UserComment,Upvote],
+    entities:[User,Feedback,Tag,FeedbackTag,Comment,UserComment,Votes],
     synchronize: false,
   }),
 };

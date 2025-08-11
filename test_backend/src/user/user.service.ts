@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HasingService } from 'src/hasing/hasing.service';
 import { FeedbackService } from 'src/feedback/feedback.service';
-
+import { ILike } from "typeorm";
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>,
@@ -62,6 +62,7 @@ export class UserService {
   }
 
 
+
   async findAlluser(userId: number) {
     if (userId == 1) {
       return await this.userRepo.find();
@@ -77,11 +78,18 @@ export class UserService {
   }
 
 
-  async seeMyFeedbacks(userId: number) {
+  async myFeedbacks(userId: number) {
     return await this.feedbackService.findAllUserFeedback(userId);
   }
 
 
+
+async searchUser() {
+  return await this.userRepo.find();
+}
+
+
+  
 
 
 

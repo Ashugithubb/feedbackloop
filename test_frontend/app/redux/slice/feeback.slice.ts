@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { any } from 'zod';
-
+import qs from 'qs';
 
 export interface User {
   id: number;
@@ -55,8 +55,9 @@ export interface GetFeedbackQuery {
   page?: number;
   limit?: number;
   searchValue?: string
-  tags?: number
-  author?: number
+  tags?: number[]
+  authors?: number[]
+  sortOrder?: "ASC" | "DESC";
 }
 
 export const getFeedbackThunk = createAsyncThunk(
@@ -66,8 +67,9 @@ export const getFeedbackThunk = createAsyncThunk(
       const response = await axios.get(`http://localhost:3001/feedback`, {
         withCredentials: true,
         params: query,
+        paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
       });
-      console.log("res", response.data);
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch students');

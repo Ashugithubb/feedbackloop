@@ -9,7 +9,7 @@ export const UserInfo = createAsyncThunk(
       const res = await axios.get('http://localhost:3001/user', {
         withCredentials: true,
       });
-     console.log("data:", res.data);
+     
       return res.data; 
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch user profile');

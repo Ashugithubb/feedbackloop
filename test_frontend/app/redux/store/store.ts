@@ -5,6 +5,9 @@ import userReducer from '../slice/user.slice';
 import storage from 'redux-persist/lib/storage'; 
 import { persistStore, persistReducer } from 'redux-persist';
 import feedbackReducer from '../slice/feeback.slice'
+import tagReducer from '../slice/tags.slice'
+import userSearchReducer from '../slice/author.slice'
+import myFeedbackReducer from '../slice/my.feedback.slice'
 const persistConfig = {
   key: 'root',
   storage,
@@ -13,7 +16,10 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
-  feedback:feedbackReducer
+  feedback:feedbackReducer,
+  tags:tagReducer,
+  author:userSearchReducer,
+  myfeedback: myFeedbackReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
