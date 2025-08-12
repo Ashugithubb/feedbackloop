@@ -18,6 +18,9 @@ export class User {
     @Column({select:false})
     password:string
 
+    @Column({default:'Admin'})
+    role:'Admin'|'User'
+
     @CreateDateColumn()
     createdAt:Date
     
@@ -27,6 +30,7 @@ export class User {
   @OneToMany(() => Votes, vote => vote.user)
     votes: Votes[];
     
+  
   @OneToMany(()=>UserComment,(u)=>u.user)
     userComment:UserComment[]
 }

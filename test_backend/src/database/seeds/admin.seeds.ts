@@ -15,7 +15,8 @@ export default class AdminSeeder implements Seeder {
             userRepo.create({
                 userName: 'Admin01',
                 password: `${password}`,
-                email: 'admin01@gmail.com'
+                email: 'admin01@gmail.com',
+                role:'Admin'
             },
             ),
         );

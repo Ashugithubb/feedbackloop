@@ -28,7 +28,7 @@ export class AuthService {
      
         if (!matched) throw new UnauthorizedException("Invalid password");
       
-        return { email: user.email, id: user.id, };
+        return { email: user.email, id: user.id,role:user.role };
 
 
     }
