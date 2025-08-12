@@ -82,8 +82,8 @@ export class FeedbackService {
       where: { user: { id: userId } }
     })
   }
-  async showAllFeebackWithUserDeatails(adminId: number) {
-    if (adminId == 1) {
+  async showAllFeebackWithUserDeatails(role: string) {
+    if (role == "Admin") {
       return await this.feedbackRepo.find(
         {
           relations: ["user",],
