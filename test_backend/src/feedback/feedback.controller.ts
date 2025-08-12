@@ -12,14 +12,15 @@ export class FeedbackController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createFeedbackDto: CreateFeedbackDto, @Req() req) {
-    console.log(createFeedbackDto);
+   
     const userId = req.user.id
     return this.feedbackService.create(createFeedbackDto, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateFeedbackDto: UpdateFeedbackDto) {
-    return this.feedbackService.update(id, updateFeedbackDto);
+  update(@Param('id') id: number) {
+    
+    return this.feedbackService.update(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -37,7 +38,6 @@ export class FeedbackController {
 
   @Get()
    async showAllFeeback(@Query() query:GetFeedbackQueryDto) {
-    
     return await this.feedbackService.showAllFeeback(query);
     
   }

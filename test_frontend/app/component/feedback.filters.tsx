@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hook/hook";
 import { getFeedbackThunk } from "../redux/slice/feeback.slice";
 import { TagInfo, TagDetails } from "../redux/slice/tags.slice";
 import { UserDetails, UserSearch } from "../redux/slice/author.slice";
-
+const Scores = ["ASC", 'DESC']
 export default function FeedbackFilters() {
     const dispatch = useAppDispatch();
 
@@ -16,26 +16,30 @@ export default function FeedbackFilters() {
     const [searchValue, setSearchValue] = React.useState("");
     const [selectedTags, setSelectedTags] = React.useState<TagDetails[]>([]);
     const [selectedAuthors, setSelectedAuthors] = React.useState<UserDetails[]>([]);
+    const [value, setValue] = React.useState<string | null>(Scores[0]);
+    const [inputValue, setInputValue] = React.useState('');
 
-    +
-        React.useEffect(() => {
-            dispatch(TagInfo());
-            dispatch(UserSearch());
-        }, [dispatch]);
+    React.useEffect(() => {
+        dispatch(TagInfo());
+        dispatch(UserSearch());
+    }, [dispatch]);
 
 
     React.useEffect(() => {
         const debounce = setTimeout(() => {
+
             dispatch(
                 getFeedbackThunk({
                     searchValue: searchValue.trim() || undefined,
                     tags: selectedTags.map((t) => t.id),
                     authors: selectedAuthors.map((a) => a.id),
+                    limit: 2,
+                    sortOrder:value??"ASC"
                 })
             );
         }, 500);
         return () => clearTimeout(debounce);
-    }, [searchValue, selectedTags, selectedAuthors, dispatch]);
+    }, [searchValue, selectedTags, selectedAuthors, dispatch,value]);
 
     return (
         <Box display="flex" gap={2} flexWrap="wrap">
@@ -69,6 +73,20 @@ export default function FeedbackFilters() {
                 onChange={(_, newValue) => setSelectedAuthors(newValue)}
                 sx={{ width: 250 }}
                 renderInput={(params) => <TextField {...params} label="Authors" />}
+            />
+            <Autocomplete
+                value={value}
+                onChange={(event: any, newValue: string | null) => {
+                    setValue(newValue);
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+                id="controllable-states-demo"
+                options={Scores}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="score" />}
             />
         </Box>
     );

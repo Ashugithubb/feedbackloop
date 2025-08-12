@@ -9,9 +9,11 @@ import {
   Grid,
   CircularProgress,
   Box,
+  Button,
 } from "@mui/material";
 import { Grid3x3 } from "@mui/icons-material";
 import { getMyFeedbackThunk } from "../redux/slice/my.feedback.slice";
+import { toggleStatus } from "../redux/thunk/toggleStatus";
 
 export default function FeedbackList() {
   const dispatch = useAppDispatch();
@@ -39,8 +41,11 @@ export default function FeedbackList() {
     );
   }
 
+  const handelToggle = async (feedbackId:number)=>{
+      const res = await dispatch(toggleStatus(feedbackId));
+  }
  return (
-  <Box sx={{ p: 3 }}>
+  <Box sx={{ p: 3}}>
     <Typography variant="h4" gutterBottom>
       Feedback List
     </Typography>
@@ -55,7 +60,7 @@ export default function FeedbackList() {
         <Box
           key={item.id}
           sx={{
-            flex: "1 1 calc(33.33% - 16px)", 
+            flex: "1", 
             minWidth: 300,
           }}
         >
@@ -67,9 +72,9 @@ export default function FeedbackList() {
               <Typography variant="body2" color="text.secondary" paragraph>
                 {item.description}
               </Typography>
-              <Typography variant="body2">
+              <Button onClick={()=>handelToggle(item.id)}><Typography variant="body2">
                 <strong>Status:</strong> {item.status}
-              </Typography>
+              </Typography></Button>
               <Typography variant="body2">
                 👍 {item.upVotes} | 👎 {item.downVotes}
               </Typography>

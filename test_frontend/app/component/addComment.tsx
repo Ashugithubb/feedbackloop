@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -7,15 +8,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { AddComment } from '../redux/thunk/comment.thunk';
-import { useAppDispatch } from '../redux/hook/hook';
+import { useAppDispatch, useAppSelector } from '../redux/hook/hook';
 import { toast, ToastContainer } from 'react-toastify';
+import { Box, Stack } from '@mui/material';
+import ViewComments from './ViewComments';
 
 interface FormDialogProps {
   feedbackId: number;
 }
-
 export default function FormDialog({ feedbackId }: FormDialogProps) {
+  const token = useAppSelector((state) => state.login.token);
   const [open, setOpen] = React.useState(false);
+  const [openViewComment, setOpenViewComment] = React.useState(false)
   const dispatch = useAppDispatch();
 
   const handleClickOpen = () => setOpen(true);
@@ -25,27 +29,30 @@ export default function FormDialog({ feedbackId }: FormDialogProps) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    
     const commentData: any = Object.fromEntries(formData.entries());
     commentData.feedbackId = feedbackId;
-    console.log(commentData);
-   
-    const res = await  dispatch(AddComment(commentData)); ;
-    
-        if (res.meta.requestStatus === 'fulfilled') {
-          toast.success("Comment Added!");
-        } else {
-          toast.error(res.payload || " Not able to comment");
-        }
+
+
+    const res = await dispatch(AddComment(commentData));;
+    if (!token) { toast("Login to Add Comments") }
+    if (res.meta.requestStatus === 'fulfilled') {
+      toast.success("Comment Added!");
+    } else {
+      toast.error(res.payload || " Not able to comment");
+    }
     handleClose();
   };
-
   return (
     <>
-      <Button variant="contained" onClick={handleClickOpen}>
-        Add Comment
-      </Button>
-      <ToastContainer/>
+
+      <Stack direction={"row"} spacing={2}>
+        <ToastContainer />
+        <Button color="primary" onClick={handleClickOpen}>
+          Add Comment
+        </Button>
+        <Button onClick={() => setOpenViewComment(!openViewComment)}>View Comment</Button>
+      </Stack>
+      <ToastContainer />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Feedback Comment</DialogTitle>
         <DialogContent>
@@ -72,6 +79,17 @@ export default function FormDialog({ feedbackId }: FormDialogProps) {
             Add
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openViewComment}
+        onClose={() => setOpenViewComment(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Comments</DialogTitle>
+        <DialogContent dividers>
+          <ViewComments />
+        </DialogContent>
       </Dialog>
     </>
   );

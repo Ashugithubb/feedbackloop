@@ -21,13 +21,13 @@ export class AuthService {
 
     ) { }
     async validateUser({ emailOrUsername, password }: { emailOrUsername: string, password: string }) {
-        console.log("jfiujfuif");
+        
         const user = await this.userService.findOneByEmailOrUserName(emailOrUsername);
-        if (!user) throw new UnauthorizedException("User email not found");
+        if (!user) throw new UnauthorizedException("UserName or email not found");
         const matched = await this.hasingService.compare(password, user.password);
-        console.log("matched")
+     
         if (!matched) throw new UnauthorizedException("Invalid password");
-        console.log("matched")
+      
         return { email: user.email, id: user.id, };
 
 
@@ -71,10 +71,11 @@ export class AuthService {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
-            maxAge: 2 * 60 * 10000,
+            maxAge: 2 * 60 * 100000,
         });
         return {
-            "msg": "Loged In Successfully"
+            "msg": "Loged In Successfully",
+            "token":token
         }
     }
 

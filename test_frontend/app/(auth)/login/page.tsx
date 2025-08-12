@@ -20,7 +20,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation'
 import { useAppDispatch } from '@/app/redux/hook/hook';
 import { UserInfo } from '@/app/redux/slice/user.slice';
-import { loginUser } from '@/app/redux/thunk/login.user';
+import { loginUser } from '@/app/redux/slice/auth.slice';
 
 
 

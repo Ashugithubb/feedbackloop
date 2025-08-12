@@ -12,6 +12,7 @@ import { GetFeedbackQueryDto } from './dto/feedback.query.dto';
 import { Score } from './enum/scrore.enum';
 import { isObject } from 'class-validator';
 import { Console } from 'console';
+import { Status } from './enum/status.enum';
 
 
 @Injectable()
@@ -56,9 +57,20 @@ export class FeedbackService {
     return feedbackAssigned
 
   }
-  async update(id: number, updateFeedbackDto: UpdateFeedbackDto) {
+  async update(id: number) {
+    const feedback = await this.feedbackRepo.findOneBy({ id });
+    if (!feedback) throw new NotFoundException("Feedback Not Found");
 
-    return await this.feedbackRepo.update(id, updateFeedbackDto);
+    if (feedback.status === "Public") {
+
+      feedback.status = Status.Private;
+      await this.feedbackRepo.save(feedback);
+
+    } else {
+
+      feedback.status = Status.PUBLIC;
+      await this.feedbackRepo.save(feedback);
+    }
   }
 
   async remove(id: number) {
@@ -81,8 +93,8 @@ export class FeedbackService {
     }
   }
 
-  
-   async incrementUpvotes(feedbackId: number): Promise<void> {
+
+  async incrementUpvotes(feedbackId: number): Promise<void> {
     await this.feedbackRepo.increment({ id: feedbackId }, 'upVotes', 1);
   }
 
@@ -98,7 +110,7 @@ export class FeedbackService {
     await this.feedbackRepo.decrement({ id: feedbackId }, 'downVotes', 1);
   }
 
-    //     async showAllFeeback(query: GetFeedbackQueryDto) {
+  //     async showAllFeeback(query: GetFeedbackQueryDto) {
   //     const {
   //       page = 1,
   //       limit = 10,
@@ -152,7 +164,7 @@ export class FeedbackService {
   async showAllFeeback(query: GetFeedbackQueryDto) {
     const {
       page = 1,
-      limit = 10,
+      limit = 5,
       authors,
       searchValue,
       sortOrder,
@@ -164,6 +176,9 @@ export class FeedbackService {
       .leftJoinAndSelect('feedback.user', 'user')
       .leftJoinAndSelect('feedback.feedbackTag', 'feedbackTag')
       .leftJoinAndSelect('feedbackTag.tag', "tag")
+      .leftJoinAndSelect('feedback.comment', "comment")
+      .leftJoinAndSelect('comment.child', 'child')
+      .leftJoinAndSelect('comment.parent', 'parent')
 
     qb.andWhere('feedback.status = :status', { status: 'Public' });
     if (searchValue) {

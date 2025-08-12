@@ -8,10 +8,11 @@ import feedbackReducer from '../slice/feeback.slice'
 import tagReducer from '../slice/tags.slice'
 import userSearchReducer from '../slice/author.slice'
 import myFeedbackReducer from '../slice/my.feedback.slice'
+import loginReducer from '../slice/auth.slice'
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user'], 
+  whitelist: ['user','login'], 
 };
 
 const rootReducer = combineReducers({
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
   feedback:feedbackReducer,
   tags:tagReducer,
   author:userSearchReducer,
-  myfeedback: myFeedbackReducer
+  myfeedback: myFeedbackReducer,
+  login:loginReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

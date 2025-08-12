@@ -15,56 +15,62 @@ export class VotesService {
     private readonly userService: UserService,
     private readonly feedbackService: FeedbackService) { }
 
-  async toggleVote(createVoteDto: CreateVoteDto, userId: number) {
-    const { feedbackId, voteType } = createVoteDto;
+ async toggleVote(createVoteDto: CreateVoteDto, userId: number) {
+  const { feedbackId, voteType } = createVoteDto;
 
-    const user = await this.userService.findOne(userId);
-    const feedback = await this.feedbackService.findOne(feedbackId);
-    if (!user || !feedback) throw new NotFoundException("User or Feedback not found");
+  const user = await this.userService.findOne(userId);
+  const feedback = await this.feedbackService.findOne(feedbackId);
 
-    const existingVote = await this.votesRepo.findOne({
-      where: { user: { id: userId }, feedback: { id: feedbackId } },
-    });
+  if (!user || !feedback) {
+    throw new NotFoundException("User or Feedback not found");
+  }
 
-    if (!existingVote) {
-      const newVote = this.votesRepo.create({ user, feedback, type: voteType });
-      await this.votesRepo.save(newVote);
-      if (voteType === 'up') {
-        await this.feedbackService.incrementUpvotes(feedbackId);
-      } else {
-       
-        await this.feedbackService.incrementDownvotes(feedbackId);
-      }
-      return `${voteType === 'up' ? 'Upvoted' : 'Downvoted'}`;
-    }
+  const existingVote = await this.votesRepo.findOne({
+    where: { user: { id: userId }, feedback: { id: feedbackId } },
+  });
 
-
-    if (existingVote.type === voteType) {
-      await this.votesRepo.remove(existingVote);
-      if (voteType === 'up') {
-        await this.feedbackService.decrementUpvotes(feedbackId);
-      } else {
-        await this.feedbackService.decrementDownvotes(feedbackId);
-      }
-      return `${voteType === 'up' ? 'Upvote removed' : 'Downvote removed'}`;
-    }
-
-
-    const oldType = existingVote.type;
-    existingVote.type = voteType;
-    await this.votesRepo.save(existingVote);
-
+ 
+  if (!existingVote) {
+    const newVote = this.votesRepo.create({ user, feedback, type: voteType });
+    await this.votesRepo.save(newVote);
 
     if (voteType === 'up') {
       await this.feedbackService.incrementUpvotes(feedbackId);
-      await this.feedbackService.decrementDownvotes(feedbackId);
     } else {
       await this.feedbackService.incrementDownvotes(feedbackId);
+    }
+
+    return `${voteType === 'up' ? 'Upvoted' : 'Downvoted'}`;
+  }
+
+ 
+  if (existingVote.type === voteType) {
+    await this.votesRepo.remove(existingVote);
+
+    if (voteType === 'up') {
+      await this.feedbackService.decrementUpvotes(feedbackId);
+    } else {
       await this.feedbackService.decrementDownvotes(feedbackId);
     }
 
-    return `Changed vote to ${voteType === 'up' ? 'Upvote' : 'Downvote'}`;
+    return `${voteType === 'up' ? 'Upvote removed' : 'Downvote removed'}`;
   }
+
+ 
+  const oldType = existingVote.type;
+  existingVote.type = voteType;
+  await this.votesRepo.save(existingVote);
+
+  if (voteType === 'up') {
+    await this.feedbackService.incrementUpvotes(feedbackId);
+    await this.feedbackService.decrementDownvotes(feedbackId); 
+  } else {
+    await this.feedbackService.incrementDownvotes(feedbackId);
+    await this.feedbackService.decrementUpvotes(feedbackId); 
+  }
+
+  return `Changed vote to ${voteType === 'up' ? 'Upvote' : 'Downvote'}`;
+}
 
 
   findAll() {

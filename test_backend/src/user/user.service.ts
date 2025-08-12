@@ -34,14 +34,15 @@ export class UserService {
   }
 
   async findOneByEmailOrUserName(emailOrUsername: string) {
-    let user: User;
+  
+   
     if (emailOrUsername) {
 
       const user = await this.userRepo.findOne({
-        where: { userName: emailOrUsername },
-        select: ["email", "id", "password"]
+        where: { email: emailOrUsername },
+        select: ["email", "userName","id", "password"]
       })
-
+     
       if (user != null) { return user; }
     }
 
@@ -52,7 +53,7 @@ export class UserService {
 
         select: ["email", "userName", "id", "password"]
       })
-
+     
       return user;
     }
   }

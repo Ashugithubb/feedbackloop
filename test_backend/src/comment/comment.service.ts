@@ -18,10 +18,10 @@ export class CommentService {
     private readonly userCommentService: UserCommentService) { }
 
   async create(createCommentDto: CreateCommentDto, userId: number) {
-    console.log(2)
+
     const user = await this.userService.findOne(userId);
     if (!user) throw new NotFoundException("User Not Found");
-    console.log(3)
+
     const { feedbackId, content } = createCommentDto;
 
     const feedback = await this.feedbackService.findOne(feedbackId);

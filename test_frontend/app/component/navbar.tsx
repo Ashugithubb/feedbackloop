@@ -22,10 +22,9 @@ const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const email = useAppSelector((state) => state.user.profile?.email)
   useEffect(() => {
-    console.log("start");
     dispatch(UserInfo());
   }, [dispatch]);
-
+const token = useAppSelector((state)=>state.login.token);
   const { profile, loading, error } = useAppSelector((state) => state.user);
   const handelLogoutClick = async () => {
     try {
@@ -37,7 +36,6 @@ const Navbar: React.FC = () => {
       console.log(err)
     }
   }
-
   const handelLoginClick = () => {
     router.push('/login')
   }
@@ -59,7 +57,7 @@ const Navbar: React.FC = () => {
 
         <Box flexGrow={1} />
         <Box sx={{ display: "flex", gap: 2 }}>
-          {!email ? (
+          {!token ? (
             <Button onClick={handelLoginClick} variant="contained">
               Log in
             </Button>
@@ -75,7 +73,7 @@ const Navbar: React.FC = () => {
             <NotificationsIcon />
           </IconButton>
           <Avatar
-            // alt={profile?.name}
+            alt={profile?.userName}
             // src={profile?.email}
             sx={{ cursor: 'pointer' }}
           />

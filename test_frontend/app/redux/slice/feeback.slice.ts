@@ -57,7 +57,8 @@ export interface GetFeedbackQuery {
   searchValue?: string
   tags?: number[]
   authors?: number[]
-  sortOrder?: "ASC" | "DESC";
+  // sortOrder?: "ASC" | "DESC";
+   sortOrder?:string;
 }
 
 export const getFeedbackThunk = createAsyncThunk(
