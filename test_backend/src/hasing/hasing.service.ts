@@ -7,7 +7,7 @@ export class HasingService {
         const saltOrRounds = 10;
 
         const hash = await bcrypt.hash(pass, saltOrRounds);
-        console.log(hash)
+        
         return hash;
     }
     

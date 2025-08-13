@@ -6,9 +6,10 @@ import { User } from './entities/user.entity';
 import { HasingModule } from 'src/hasing/hasing.module';
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { FeedbackModule } from 'src/feedback/feedback.module';
+import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([User]),HasingModule,forwardRef(()=>FeedbackModule)],
+  imports:[TypeOrmModule.forFeature([User]),HasingModule,forwardRef(()=>FeedbackModule),RabbitMQModule],
   controllers: [UserController],
   providers: [UserService],
   exports:[UserService]

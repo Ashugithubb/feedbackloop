@@ -12,7 +12,7 @@ export class RabbitMQService implements OnModuleInit {
         urls: ['amqp://guest:guest@localhost:5672'],
         queue: 'my_queue',
         queueOptions: {
-          durable: false,
+          durable: true,
         },
       },
     });
