@@ -26,15 +26,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export interface authinfo{
+  msg:string,
+  token:string,
+  role:string
+}
 export interface login{
     loading: boolean;
     error: string | null;
-    token:string | null
+    auth:authinfo|null
 }
 const initialState :login = {
     loading: false,
     error: null,
-    token: null
+   auth:null
 }
 
 
@@ -44,7 +49,7 @@ const loginSlice = createSlice({
     initialState,
     reducers: {
         clearUser: (state) => {
-            state.token = null;
+            state.auth = null;
             state.error = null;
         },
     },
@@ -54,9 +59,11 @@ const loginSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(loginUser .fulfilled, (state, action: PayloadAction<string>) => {
+            .addCase(loginUser .fulfilled, (state, action: PayloadAction<authinfo>) => {
                 state.loading = false;
-                state.token = action.payload;
+                console.log("action ",action.payload)
+                state.auth = action.payload
+
             })
             .addCase(loginUser .rejected, (state, action) => {
                 state.loading = false;

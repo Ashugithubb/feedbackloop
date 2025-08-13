@@ -40,8 +40,8 @@ export class CommentService {
   }
 
 
-  async addCommentOnComment(parentId:number,nestedCommentDto: NestedCommentDto,userId: number) {
-    if(userId==1) throw new ForbiddenException("You are admin you cannot add comment");
+  async addCommentOnComment(parentId:number,nestedCommentDto: NestedCommentDto,userId:number,role: string) {
+    if(role==='Admin') throw new ForbiddenException("You are admin you cannot add comment");
     const {content } = nestedCommentDto;
 
     const parentComment = await this.commentRepo.findOneBy({ id: parentId });

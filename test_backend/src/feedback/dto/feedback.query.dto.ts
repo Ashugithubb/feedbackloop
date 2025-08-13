@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Score } from '../enum/scrore.enum';
 
@@ -48,4 +48,8 @@ export class GetFeedbackQueryDto {
   @IsString()
   @IsIn(['ASC', 'DESC'])
   sortOrder?: 'ASC' | 'DESC';
+
+  @IsOptional()
+  @IsString()
+  deleted?:string
 }

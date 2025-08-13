@@ -30,14 +30,16 @@ export class FeedbackController {
   }
 
   
-
-  //  @Get('list')
-  //  showAllFeeback() {
-  //   return this.feedbackService.showAllFeebackWithUserDeatails(); 
-  // }
+@UseGuards(JwtAuthGuard)
+   @Get('list')
+   showAllFeebackForAdmin(@Query() query:GetFeedbackQueryDto,@Req() req) {
+    const role = req.user.role;
+    return this.feedbackService.showAllFeebackWithUserDeatails(query,role); 
+  }
 
   @Get()
-   async showAllFeeback(@Query() query:GetFeedbackQueryDto) {
+   async showAllFeeback(@Query() query:GetFeedbackQueryDto,) {
+    
     return await this.feedbackService.showAllFeeback(query);
     
   }

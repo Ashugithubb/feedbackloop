@@ -74,7 +74,7 @@ export class FeedbackService {
   }
 
   async remove(id: number) {
-    return await this.feedbackRepo.delete(id);
+    return await this.feedbackRepo.softDelete(id);
   }
 
   async findAllUserFeedback(userId: number) {
@@ -82,16 +82,60 @@ export class FeedbackService {
       where: { user: { id: userId } }
     })
   }
-  async showAllFeebackWithUserDeatails(role: string) {
+  async showAllFeebackWithUserDeatails(query: GetFeedbackQueryDto, role: string) {
     if (role == "Admin") {
-      return await this.feedbackRepo.find(
-        {
-          relations: ["user",],
-          withDeleted: false
-        }
-      )
+      const {
+        page = 1,
+        limit = 5,
+        authors,
+        searchValue,
+        sortOrder,
+        tags,
+        deleted,
+      } = query;
+
+      const qb = this.feedbackRepo
+        .createQueryBuilder('feedback')
+        .leftJoinAndSelect('feedback.user', 'user')
+        .leftJoinAndSelect('feedback.feedbackTag', 'feedbackTag')
+        .leftJoinAndSelect('feedbackTag.tag', "tag")
+        .leftJoinAndSelect('feedback.comment', "comment")
+        .leftJoinAndSelect('comment.child', 'child')
+        .leftJoinAndSelect('comment.parent', 'parent')
+
+      if (deleted === "true") {
+        qb.withDeleted();
+      }
+      qb.andWhere('feedback.status = :status', { status: 'Public' });
+      if (searchValue) {
+        qb.andWhere(
+          '(feedback.title ILIKE :search OR feedback.description ILIKE :search)',
+          { search: `%${searchValue}%` }
+        );
+      }
+
+      if (authors) {
+        qb.andWhere('user.id IN (:...authors)', { authors });
+      }
+      if (tags) {
+        qb.andWhere('tag.id IN (:...tagIds)', { tagIds: tags });
+      }
+      const [feedback, total] = await qb
+        .addSelect('feedback.upVotes - feedback.downVotes', 'score')
+        .orderBy('score', sortOrder)
+        .skip((page - 1) * limit)
+        .take(limit)
+
+        .getManyAndCount();
+      return {
+        total,
+        page,
+        limit,
+        feedback,
+      };
     }
   }
+
 
 
   async incrementUpvotes(feedbackId: number): Promise<void> {
@@ -168,7 +212,8 @@ export class FeedbackService {
       authors,
       searchValue,
       sortOrder,
-      tags
+      tags,
+      deleted
     } = query;
 
     const qb = this.feedbackRepo
@@ -181,6 +226,9 @@ export class FeedbackService {
       .leftJoinAndSelect('comment.parent', 'parent')
 
     qb.andWhere('feedback.status = :status', { status: 'Public' });
+     if (deleted === "true") {
+        qb.withDeleted();
+      }
     if (searchValue) {
       qb.andWhere(
         '(feedback.title ILIKE :search OR feedback.description ILIKE :search)',

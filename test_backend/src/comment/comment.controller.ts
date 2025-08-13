@@ -21,9 +21,9 @@ export class CommentController {
   @Post(":commentId")
   async addCommentOnComment(@Param("commentId")commentId:number,@Body()nesteCommentDto:NestedCommentDto,@Req() req) {
       const userId = req.user.id;
-      return this.commentService.addCommentOnComment(commentId,nesteCommentDto,userId);
+      const role = req.user.role;
+      return this.commentService.addCommentOnComment(commentId,nesteCommentDto,userId,role);
   }
-
   @Get()
   findAll() {
     return this.commentService.findAll();

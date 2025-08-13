@@ -8,12 +8,19 @@ interface CommentType {
   id: number;
   content: string;
   createdAt: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
+  parent?: CommentType | null;
   child?: CommentType[];
 }
 
-export default function ViewComments() {
-  
+interface ViewCommentsProps {
+  comment: CommentType[];
+}
 
+export default function ViewComments(comment:any) {
+  console.log("comment is ",comment.comment.comment)
+  const feedbackComment = comment.comment.comment;
   const [comments, setComments] = useState<CommentType[]>([
     {
       id: 1,

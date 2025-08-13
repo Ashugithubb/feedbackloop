@@ -3,10 +3,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { HasingService } from 'src/hasing/hasing.service';
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { ILike } from "typeorm";
+import { Console } from 'console';
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>,
@@ -34,15 +35,16 @@ export class UserService {
   }
 
   async findOneByEmailOrUserName(emailOrUsername: string) {
-  
-   
+
+
     if (emailOrUsername) {
 
       const user = await this.userRepo.findOne({
         where: { email: emailOrUsername },
-        select: ["email", "userName","id", "password"]
+        select: ["email", "userName", "id", "password", "role"],
+        withDeleted: false
       })
-     
+
       if (user != null) { return user; }
     }
 
@@ -51,9 +53,10 @@ export class UserService {
 
         where: { userName: emailOrUsername },
 
-        select: ["email", "userName", "id", "password"]
+        select: ["email", "userName", "id", "password", "role"],
+        withDeleted: false
       })
-     
+
       return user;
     }
   }
@@ -64,16 +67,32 @@ export class UserService {
 
 
 
-  async findAlluser(userId: number) {
-    if (userId == 1) {
+  async findAlluser(userName: string) {
+    if (userName == 'Admin') {
       return await this.userRepo.find();
     }
     throw new ForbiddenException()
   }
 
-  async disableUser(userId: number, adminId: number) {
-    if (adminId == 1) {
-      await this.userRepo.softDelete(userId);
+  async disableUser(userName: string, role: string) {
+    if (role === 'Admin') {
+      const user = await this.userRepo.findOne({
+        where: {
+          userName: userName,
+          deletedAt: Not(IsNull())
+        },
+        withDeleted: true
+      })
+     
+      if (user) {
+         await this.userRepo.restore(user.id);
+          return "user enabled";
+      }
+      else {
+         await this.userRepo.softDelete({ userName: userName }
+        );
+        return "user Disabled";
+      }
     }
     throw new ForbiddenException()
   }
@@ -85,12 +104,12 @@ export class UserService {
 
 
 
-async searchUser() {
-  return await this.userRepo.find();
-}
+  async searchUser() {
+    return await this.userRepo.find();
+  }
 
 
-  
+
 
 
 

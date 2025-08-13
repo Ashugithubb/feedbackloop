@@ -24,7 +24,7 @@ export default function AllFeedbackList() {
   };
 
   const { feedback, total, limit, page } = feedbacklist;
-const token = useAppSelector((state)=>state.login.token)
+const token = useAppSelector((state)=>state.login.auth?.token);
   useEffect(() => {
     dispatch(getFeedbackThunk({ limit: 2, page }));
   }, [dispatch, page]);
@@ -46,7 +46,7 @@ const token = useAppSelector((state)=>state.login.token)
 <ToastContainer/>
       {feedback?.length > 0 ? (
         <>
-          {feedback.map((c: any, index: number) => (
+          {feedback.map((c?: any, index?: number) => (
             <Box key={index}>
 
               <Card sx={{ height: "400px", width: "800px", margin: "0 auto",mt: 4, p: 2, background: "#D3D3D3" }}>
@@ -65,9 +65,9 @@ const token = useAppSelector((state)=>state.login.token)
                       <Stack direction={"column"} sx={{ marginLeft: "30px" }}>
                         <Stack direction={"row"} sx={{ marginTop: "5px", display: "flex" }}>
 
-                          <Avatar alt={c.user.userName} src={c.user.userName} />
+                          <Avatar alt={c?.user?.userName} src={c?.user?.userName} />
                           <Typography variant="h5" component="div" sx={{ marginLeft: "10px" }}>
-                            {c.user.userName}
+                            {c?.user?.userName}
                           </Typography>
                         </Stack>
                         <Stack sx={{ marginTop: "15px" }}>
@@ -90,7 +90,8 @@ const token = useAppSelector((state)=>state.login.token)
                         </Stack>
 
                         <Box sx={{ display: "flex", marginLeft: "295px", gap: 2, height: "50px", marginTop: "55px" }}>
-                          <FormDialog feedbackId={c.id} />
+                        
+                          <FormDialog feedbackId={c.id} comments={c}   />
                         </Box>
                       </Stack>
                     </Stack>

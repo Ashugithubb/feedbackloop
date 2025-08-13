@@ -14,7 +14,8 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const [openFeedback, setFeedback] = useState(false)
  
-  const token = useAppSelector((state)=>state.login.token);
+  const token = useAppSelector((state)=>state.login.auth?.token);
+  const role = useAppSelector((state)=>state.login.auth?.role);
   const router = useRouter()
   return (
     <>
@@ -22,10 +23,9 @@ export default function Home() {
       <Box sx={{ marginTop: 5 }}><FeedbackFilters /></Box>
 
      
-     {token&& <Box sx={{ display: "flex", justifyContent: "flex-end" }}>  <Button variant="contained" onClick={() => router.push("/home/profile")}>My Feedbacks</Button></Box>}
+     {role==="User"&&token&& <Box sx={{ display: "flex", justifyContent: "flex-end" }}>  <Button variant="contained" onClick={() => router.push("/home/profile")}>My Feedbacks</Button></Box>}
+      {role==="Admin"&&token&& <Box sx={{ display: "flex", justifyContent: "flex-end" }}>  <Button variant="contained" onClick={() => router.push("/home/admin")}>Manage Feedbacks and Users</Button></Box>}
       <AllFeedbackList />
-     
-     
      
     </>
   );

@@ -59,6 +59,7 @@ export interface GetFeedbackQuery {
   authors?: number[]
   // sortOrder?: "ASC" | "DESC";
    sortOrder?:string;
+   deleted?:string
 }
 
 export const getFeedbackThunk = createAsyncThunk(
@@ -73,7 +74,7 @@ export const getFeedbackThunk = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch students');
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch Feedbacks');
     }
   }
 );

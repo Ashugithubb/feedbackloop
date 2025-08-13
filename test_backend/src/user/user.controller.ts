@@ -39,14 +39,17 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  disableUser(@Param('id') id: string,@Req()req) {
-    const adminId=req.user.id
-    return this.userService.disableUser(+id,adminId);
+  @Delete(':userName/disable')
+  disableUser(@Param('userName')userName: string,@Req()req) {
+    const role=req.user.role;
+   
+    return this.userService.disableUser(userName,role);
   }
 
   @Get('search')
   async searchUser(){
     return this.userService.searchUser();
   }
+
+
 }

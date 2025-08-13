@@ -28,7 +28,7 @@ export class AuthService {
      
         if (!matched) throw new UnauthorizedException("Invalid password");
       
-        return { email: user.email, id: user.id,role:user.role };
+        return { emailOrUsername: user.email, id: user.id,role:user.role };
 
 
     }
@@ -75,7 +75,8 @@ export class AuthService {
         });
         return {
             "msg": "Loged In Successfully",
-            "token":token
+            "token":token,
+            "role":payload.role
         }
     }
 

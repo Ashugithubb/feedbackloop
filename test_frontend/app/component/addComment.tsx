@@ -15,9 +15,11 @@ import ViewComments from './ViewComments';
 
 interface FormDialogProps {
   feedbackId: number;
+  comments:[]
 }
-export default function FormDialog({ feedbackId }: FormDialogProps) {
-  const token = useAppSelector((state) => state.login.token);
+export default function FormDialog({ feedbackId,comments }: FormDialogProps) {
+  const token = useAppSelector((state) => state.login.auth?.token);
+  
   const [open, setOpen] = React.useState(false);
   const [openViewComment, setOpenViewComment] = React.useState(false)
   const dispatch = useAppDispatch();
@@ -88,7 +90,7 @@ export default function FormDialog({ feedbackId }: FormDialogProps) {
       >
         <DialogTitle>Comments</DialogTitle>
         <DialogContent dividers>
-          <ViewComments />
+          <ViewComments comment={comments}  />
         </DialogContent>
       </Dialog>
     </>
