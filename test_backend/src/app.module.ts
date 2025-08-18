@@ -12,14 +12,14 @@ import { FeedbackTagModule } from './feedback-tag/feedback-tag.module';
 import { AuthModule } from './auth/auth.module';
 import { UserCommentModule } from './user-comment/user-comment.module';
 import { UpvotesModule } from './votes/votes.module';
-import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
+
 
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),TypeOrmModule.forRootAsync(typeOrmConfig), 
     UserModule, FeedbackModule, 
     TagModule, CommentModule, 
-    FeedbackTagModule,AuthModule, UserCommentModule, UpvotesModule, RabbitMQModule],
+    FeedbackTagModule,AuthModule, UserCommentModule, UpvotesModule],
   controllers: [AppController],
   providers: [AppService],
 })

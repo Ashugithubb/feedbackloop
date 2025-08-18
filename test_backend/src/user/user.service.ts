@@ -8,13 +8,13 @@ import { HasingService } from 'src/hasing/hasing.service';
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { ILike } from "typeorm";
 import { Console } from 'console';
-import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
+
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>,
     private readonly hasingService: HasingService,
     @Inject(forwardRef(() => FeedbackService))
-    private readonly feedbackService: FeedbackService,private readonly rabbitmq: RabbitMQService) { }
+    private readonly feedbackService: FeedbackService) { }
 
 
   
@@ -32,7 +32,7 @@ export class UserService {
     if (emailExist) throw new ConflictException("email Already Exist");
 
     await this.userRepo.save(createUserDto);
-    this.rabbitmq.sendMessage('user_created', { id: 1, name: 'Ashu' });
+  
     return { "msg": "User Succesfully Registered" }
 
   }
