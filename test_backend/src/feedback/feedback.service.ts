@@ -222,8 +222,9 @@ export class FeedbackService {
       .leftJoinAndSelect('feedback.feedbackTag', 'feedbackTag')
       .leftJoinAndSelect('feedbackTag.tag', "tag")
       .leftJoinAndSelect('feedback.comment', "comment")
-      .leftJoinAndSelect('comment.child', 'child')
-      .leftJoinAndSelect('comment.parent', 'parent')
+      .leftJoinAndSelect('comment.child', 'child1')
+  
+      
 
     qb.andWhere('feedback.status = :status', { status: 'Public' });
      if (deleted === "true") {

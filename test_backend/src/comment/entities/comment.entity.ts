@@ -1,10 +1,11 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Tree, UpdateDateColumn } from "typeorm";
 import { UpdateCommentDto } from "../dto/update-comment.dto";
 import { Feedback } from "src/feedback/entities/feedback.entity";
 import { User } from "src/user/entities/user.entity";
 import { UserComment } from "src/user-comment/entities/user-comment.entity";
 
 @Entity("comments")
+@Tree("nested-set")
 export class Comment {
     @PrimaryGeneratedColumn()
     id:number
